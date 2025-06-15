@@ -5,6 +5,8 @@ import java.nio.file.{Files, Paths}
 import org.ekrich.config.{ConfigException, ConfigFactory, ConfigParseOptions, ConfigRenderOptions, ConfigValueFactory}
 import org.ekrich.config.impl.{ConfigImpl, FromMapMode, SimpleConfigOrigin}
 
+import scala.util.Try
+
 object Common {
   def updateConfig(inputPath: String, outputPath: String, key: String, value: String): Unit = {
     try {
@@ -12,10 +14,11 @@ object Common {
       val parseOptions = ConfigParseOptions.defaults
       val conf = ConfigFactory.parseString(content, parseOptions)
       // 修改参数，如果key存在，则更新，否则新增
+      val formatValue: AnyRef = if (isNumeric(value)) Integer.valueOf(value) else value
       val newValue = if (conf.hasPath(key)) {
-        ConfigImpl.fromAnyRef(value, conf.getValue(key).origin, FromMapMode.KEYS_ARE_KEYS)
+        ConfigImpl.fromAnyRef(formatValue, conf.getValue(key).origin, FromMapMode.KEYS_ARE_KEYS)
       } else {
-        ConfigValueFactory.fromAnyRef(value)
+        ConfigValueFactory.fromAnyRef(formatValue)
       }
       val newConf = conf.withValue(key, newValue)
       val renderOptions = ConfigRenderOptions.defaults
@@ -43,5 +46,7 @@ object Common {
         e.printStackTrace()
     }
   }
+
+  def isNumeric(str: String): Boolean = Try(str.toInt).isSuccess
 
 }

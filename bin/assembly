@@ -1,0 +1,9 @@
+#!/bin/bash
+# 生成上线专用的jar包
+
+HOCON_HOME="$(cd `dirname "${BASH_SOURCE-$0}"`/..; pwd)"
+cd ${HOCON_HOME}
+
+./mvnw clean scala:compile compile package -DskipTests
+
+mv target/hocon-1.0-*.jar ${HOCON_HOME}

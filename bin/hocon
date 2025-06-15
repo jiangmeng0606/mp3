@@ -1,0 +1,5 @@
+#!/bin/bash
+HOCON_HOME="$(cd `dirname "${BASH_SOURCE-$0}"`/..; pwd)"
+cd ${HOCON_HOME}
+
+java -cp "hocon-1.0-SNAPSHOT.jar" com.haizhi.hocon.Main "$@"

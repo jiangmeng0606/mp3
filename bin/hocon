@@ -1,5 +1,41 @@
-#!/bin/bash
-HOCON_HOME="$(cd `dirname "${BASH_SOURCE-$0}"`/..; pwd)"
-cd ${HOCON_HOME}
+#!/usr/bin/env bash
+set -e
 
-java -cp "hocon-1.0-SNAPSHOT.jar" com.haizhi.hocon.Main "$@"
+# 获取脚本真实路径，支持软链
+# 优先使用 HOCON_HOME 环境变量，否则自动推断
+if [ -z "$HOCON_HOME" ]; then
+  SCRIPT_PATH="$(readlink -f "$0")"
+  HOCON_HOME="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
+fi
+
+# 检查目录是否存在
+if [ ! -d "$HOCON_HOME" ]; then
+  echo "Error: HOCON_HOME directory '$HOCON_HOME' does not exist."
+  exit 1
+fi
+
+JAR_FILE="$HOCON_HOME/hocon-1.0-SNAPSHOT.jar"
+if [ ! -f "$JAR_FILE" ]; then
+  echo "Error: $JAR_FILE not found in $HOCON_HOME"
+  exit 1
+fi
+
+JAVA_CMD="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+if ! command -v "$JAVA_CMD" &>/dev/null; then
+  JAVA_CMD="java"
+fi
+
+if ! command -v "$JAVA_CMD" &>/dev/null; then
+  echo "Error: Java not found. Please install Java or set JAVA_HOME."
+  exit 1
+fi
+
+# 支持帮助参数
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "Usage: $(basename "$0") [args...]"
+  echo "You must set HOCON_HOME to specify the install directory."
+  exit 0
+fi
+
+# 不改变当前目录，直接执行
+"$JAVA_CMD" -cp "$JAR_FILE" com.haizhi.hocon.Main "$@"

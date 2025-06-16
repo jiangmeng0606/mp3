@@ -13,7 +13,7 @@ object Test {
     val key = "server.port"
     val value = "newValue"
 
-    Common.updateConfig(inputPath, outputPath, key, value)
+    Common.updateConfigBatch(inputPath, outputPath, Map(key -> value))
   }
 
 }

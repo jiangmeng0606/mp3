@@ -5,19 +5,27 @@ package com.haizhi.hocon
 object Main {
 
   def main(args: Array[String]): Unit = {
-    if (args.length < 4) {
-      // scalastyle:off println
-      println("Usage: Update <input-path> <output-path> <key> <new-value>")
-      System.exit(1)
+    if (args.length < 3) {
+      println(
+        s"""Usage:
+           |  hocon-tool <input-file> <output-file> key1=value1 [key2=value2 ...]
+           |
+           |Example:
+           |  hocon-tool config.conf out.conf server.host=127.0.0.1 server.port=8081
+           |""".stripMargin)
+      sys.exit(1)
     }
 
     val inputPath = args(0)
     val outputPath = args(1)
-    val key = args(2)
-    val value = args(3)
+    val kvPairs = args.drop(2)
 
-    Common.updateConfig(inputPath, outputPath, key, value)
+    val kvMap = kvPairs.map { kv =>
+      val Array(key, value) = kv.split("=", 2)
+      key.trim -> value.trim
+    }.toMap
 
+    Common.updateConfigBatch(inputPath, outputPath, kvMap)
   }
 
 }

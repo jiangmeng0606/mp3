@@ -15,7 +15,13 @@ object Common {
       val conf = ConfigFactory.parseString(content, parseOptions)
       // 批量更新
       val newConf = kvMap.foldLeft(conf) { case (c, (key, value)) =>
-        val formatValue: AnyRef = if (isNumeric(value)) Integer.valueOf(value) else value
+        val formatValue: AnyRef = value match {
+          case _ if isNumeric(value) => java.lang.Integer.valueOf(value)
+          case _ if isBoolean(value) => java.lang.Boolean.valueOf(value)
+          case _ if isDouble(value) => java.lang.Double.valueOf(value)
+          case _ => value
+        }
+
         val newValue = if (conf.hasPath(key)) {
           ConfigImpl.fromAnyRef(formatValue, conf.getValue(key).origin, FromMapMode.KEYS_ARE_KEYS)
         } else {
@@ -52,5 +58,9 @@ object Common {
   }
 
   def isNumeric(str: String): Boolean = Try(str.toInt).isSuccess
+
+  def isBoolean(str: String): Boolean = Try(str.toBoolean).isSuccess
+
+  def isDouble(str: String): Boolean = Try(str.toDouble).isSuccess
 
 }

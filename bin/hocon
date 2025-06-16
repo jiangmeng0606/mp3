@@ -30,12 +30,5 @@ if ! command -v "$JAVA_CMD" &>/dev/null; then
   exit 1
 fi
 
-# 支持帮助参数
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-  echo "Usage: $(basename "$0") [args...]"
-  echo "You must set HOCON_HOME to specify the install directory."
-  exit 0
-fi
-
 # 不改变当前目录，直接执行
 "$JAVA_CMD" -cp "$JAR_FILE" com.haizhi.hocon.Main "$@"

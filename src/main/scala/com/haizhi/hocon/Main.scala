@@ -8,10 +8,10 @@ object Main {
     if (args.length < 3) {
       println(
         s"""Usage:
-           |  hocon-tool <input-file> <output-file> key1=value1 [key2=value2 ...]
+           |  hocon <input-file> <output-file> key1=value1 [key2=value2 ...]
            |
            |Example:
-           |  hocon-tool config.conf out.conf server.host=127.0.0.1 server.port=8081
+           |  hocon config.conf out.conf server.host=127.0.0.1 server.port=8081
            |""".stripMargin)
       sys.exit(1)
     }

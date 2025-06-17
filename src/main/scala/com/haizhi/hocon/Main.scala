@@ -8,11 +8,14 @@ object Main {
   private def printUsage(): Unit = {
     println(
       s"""Usage:
-         |  hocon <input-file> <output-file> key1=value1 [key2=value2 ...]
+         |  hocon <input-file> <output-file> [key1=value1 key2=value2 ...]
          |
          |Example:
+         |  hocon config.conf out.conf
+         |
          |  hocon config.conf out.conf server.host=127.0.0.1 server.port=8081
          |
+         |  hocon config.conf out.conf db.url=jdbc:mysql://localhost:3306/mydatabase?useSSL=false db.user=root db.password=password
          |Options:
          |  -h, --help    Show this help message
          |""".stripMargin)
@@ -24,8 +27,8 @@ object Main {
       sys.exit(0)
     }
 
-    if (args.length < 3) {
-      println("Error: Insufficient arguments.")
+    if (args.length < 2) {
+      println(s"Error: Insufficient arguments.")
       printUsage()
       sys.exit(1)
     }

@@ -74,7 +74,7 @@ object ConfigImplUtil {
     var i = 0
     while (i < s.length) {
       val c = s.charAt(i)
-      if (!Character.isLetter(c) || Character.isDigit(c) || c == '-') {
+      if (!(Character.isLetter(c) || Character.isDigit(c) || c == '-')) {
         return renderJsonString(s)
       }
       i += 1

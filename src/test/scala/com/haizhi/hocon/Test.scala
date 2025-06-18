@@ -1,13 +1,14 @@
 package com.haizhi.hocon
 
-import org.ekrich.config.{ConfigFactory, ConfigParseOptions, ConfigRenderOptions}
-import org.ekrich.config.impl.{ConfigImpl, FromMapMode}
+import com.haizhi.hocon.Common
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.funsuite.AnyFunSuite
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
 
-object Test {
-  def main(args: Array[String]): Unit = {
+class Test extends AnyFunSuite {
+
+
+  test("Test updateConfigBatch") {
     val inputPath = "conf/application.conf"
     val outputPath = "conf/output.conf"
     val key = "server.port"

@@ -45,7 +45,7 @@ object Mp3Utils {
       val album = author
 
       // 查找并读取专辑封面
-      val (imageType, imageData) = findAndReadAlbumImage(file.getParentFile.getParentFile.getAbsolutePath, album)
+      val (imageType, imageData) = findAndReadAlbumImage(file.getParentFile.getAbsolutePath, album)
       println(s"找到的图片类型: ${imageType.getOrElse("无")}")
       println(s"图片数据长度: ${imageData.map(_.length).getOrElse(0)} 字节")
 

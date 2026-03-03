@@ -2,21 +2,21 @@
 set -e
 
 # 获取脚本真实路径，支持软链
-# 优先使用 HOCON_HOME 环境变量，否则自动推断
-if [ -z "$HOCON_HOME" ]; then
+# 优先使用 MP3_HOME 环境变量，否则自动推断
+if [ -z "$MP3_HOME" ]; then
   SCRIPT_PATH="$(readlink -f "$0")"
-  HOCON_HOME="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
+  MP3_HOME="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
 fi
 
 # 检查目录是否存在
-if [ ! -d "$HOCON_HOME" ]; then
-  echo "Error: HOCON_HOME directory '$HOCON_HOME' does not exist."
+if [ ! -d "$MP3_HOME" ]; then
+  echo "Error: MP3_HOME directory '$MP3_HOME' does not exist."
   exit 1
 fi
 
-JAR_FILE="$HOCON_HOME/hocon-1.0-SNAPSHOT.jar"
+JAR_FILE="$MP3_HOME/mp3-1.0-SNAPSHOT.jar"
 if [ ! -f "$JAR_FILE" ]; then
-  echo "Error: $JAR_FILE not found in $HOCON_HOME"
+  echo "Error: $JAR_FILE not found in $MP3_HOME"
   exit 1
 fi
 
@@ -31,4 +31,5 @@ if ! command -v "$JAVA_CMD" &>/dev/null; then
 fi
 
 # 不改变当前目录，直接执行
-"$JAVA_CMD" -cp "$JAR_FILE" com.haizhi.hocon.Main "$@"
+"$JAVA_CMD" -cp "$JAR_FILE" com.haizhi.mp3.Main "$@"
+

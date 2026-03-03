@@ -1,9 +1,24 @@
 #!/bin/bash
+set -e
+
 # 生成上线专用的jar包
+MP3_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${MP3_HOME}" || exit 1
 
-HOCON_HOME="$(cd `dirname "${BASH_SOURCE-$0}"`/..; pwd)"
-cd ${HOCON_HOME}
+echo "Building MP3 project in ${MP3_HOME}..."
 
-./mvnw clean scala:compile compile package -DskipTests
+# 执行 Maven 构建
+if [ -x "./mvnw" ]; then
+  ./mvnw clean scala:compile compile package -DskipTests
+else
+  mvn clean scala:compile compile package -DskipTests
+fi
 
-mv target/hocon-1.0-*.jar ${HOCON_HOME}
+# 移动生成的 jar 文件到项目根目录
+if [ -f "target/mp3-1.0-SNAPSHOT.jar" ]; then
+  mv target/mp3-1.0-SNAPSHOT.jar "${MP3_HOME}/"
+  echo "✅ Build successful! JAR file: ${MP3_HOME}/mp3-1.0-SNAPSHOT.jar"
+else
+  echo "❌ Build failed! JAR file not found."
+  exit 1
+fi

@@ -9,20 +9,31 @@ import com.mpatric.mp3agic.{ID3v1, ID3v2, ID3v23Tag, Mp3File}
 import scala.io.Source
 import scala.util.Using
 
+/**
+ * Utility functions for listing and processing MP3 files.
+ * This refactor improves readability and adds comments but preserves original behavior.
+ */
 object Mp3Utils {
   private val imageTypes: Set[String] = Set("jpg", "jpeg", "png")
 
+  /**
+   * Recursively list all files under `folder`.
+   */
   def listAllFiles(folder: File): List[File] = {
     val list = new util.ArrayList[File]
     try {
       val path = Paths.get(folder.getPath)
-      Files.walkFileTree(path, util.EnumSet.noneOf(classOf[java.nio.file.FileVisitOption]), Integer.MAX_VALUE,
+      Files.walkFileTree(
+        path,
+        util.EnumSet.noneOf(classOf[java.nio.file.FileVisitOption]),
+        Integer.MAX_VALUE,
         new SimpleFileVisitor[Path]() {
           override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
             if (file.toFile.isFile) list.add(file.toFile)
             FileVisitResult.CONTINUE
           }
-        })
+        }
+      )
     } catch {
       case e: Exception =>
         System.err.println(s"文件扫描出错: ${e.getMessage}")
@@ -31,6 +42,9 @@ object Mp3Utils {
     list.asScala.toList
   }
 
+  /**
+   * Modify a single MP3 file: detect cover image and lyrics, update ID3 tags and save safely.
+   */
   def modify(file: File): Unit = {
     try {
       if (!file.getName.endsWith(".mp3")) {
@@ -67,10 +81,13 @@ object Mp3Utils {
     }
   }
 
+  /**
+   * Try to find an album image file in the parentPath using albumName.
+   */
   private def findAndReadAlbumImage(parentPath: String, albumName: String): (Option[String], Option[Array[Byte]]) = {
-    imageTypes.find(imageType =>
+    imageTypes.find { imageType =>
       new File(parentPath, s"$albumName.$imageType").exists()
-    ) match {
+    } match {
       case Some(imageType) =>
         val imageFile = new File(parentPath, s"$albumName.$imageType")
         (Some(imageType), Some(Files.readAllBytes(imageFile.toPath)))
@@ -79,6 +96,9 @@ object Mp3Utils {
     }
   }
 
+  /**
+   * Read lyric file if exists (songName.lrc in the same directory).
+   */
   private def findAndReadLyric(parentPath: String, songName: String): Option[String] = {
     val lyricFile = new File(parentPath, s"$songName.lrc")
     if (lyricFile.exists()) {
@@ -90,7 +110,9 @@ object Mp3Utils {
     }
   }
 
-
+  /**
+   * Save ID3v2 tag into file using a safe temporary file then rename.
+   */
   private def saveId3v2Tag(file: File, mp3File: Mp3File, id3v2: ID3v2): Unit = {
     mp3File.setId3v2Tag(id3v2)
     val tempFilePath = s"${file.getAbsolutePath}_tmp"
@@ -104,6 +126,9 @@ object Mp3Utils {
     }
   }
 
+  /**
+   * Populate ID3v2 fields including album image and lyrics.
+   */
   private def setId3v2Tag(id3v2: ID3v2, title: String, author: String, album: String,
                           imageType: Option[String], imageData: Option[Array[Byte]],
                           lyric: Option[String]): Unit = {
@@ -134,7 +159,9 @@ object Mp3Utils {
     }
   }
 
-
+  /**
+   * Show detailed information for a single MP3 file.
+   */
   def show(file: File): Unit = {
     try {
       if (!file.getName.endsWith(".mp3")) {
